@@ -64,7 +64,7 @@ export default {
         submit() {
             if(this.loading) return;
             this.loading = true;
-            fetch('http://localhost:3000/csvtoqr', {
+            fetch(`${process.env.BACKEND_URL}/csvtoqr`, {
                 method: 'post',
                 headers: {
                     'Accept': 'application/json',
