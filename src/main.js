@@ -1,27 +1,33 @@
 import Vue from 'vue';
-import VueRouter from 'vue-router';
 import App from './App.vue';
+import Vuetify from 'vuetify';
+import './stylus/main.styl';
+import VueRouter from 'vue-router';
 import GenerateQrs from './GenerateQRs.vue';
 import Home from './Home.vue';
 import ScanResults from './ScanResults.vue';
 
+Vue.use(Vuetify);
 Vue.use(VueRouter);
 
 const router = new VueRouter({
     routes: [
         {
-            path:'/generate-qrs',
+            path: '/generate-qrs',
             component: GenerateQrs
         },
         {
-            path:'/',
+            path: '/home',
             component: Home
         },
         {
-            path:'/scan-results',
+            path: '/scan-results',
             component: ScanResults
+        },
+        {
+            path: '/',
+            redirect: '/home'
         }
-
     ]
 });
 

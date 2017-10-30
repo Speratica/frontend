@@ -1,6 +1,6 @@
-# escalade
+# speratica-frontend
 
-> A Vue.js project
+> Frontend for Speratica
 
 ## Build Setup
 

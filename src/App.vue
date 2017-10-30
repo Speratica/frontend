@@ -1,22 +1,82 @@
 <template>
-    <div id="app">
-        <router-view></router-view>
-    </div>
+    <v-app id="inspire">
+        <v-navigation-drawer persistent v-model="drawer" enable-resize-watcher clipped app>
+            <v-list>
+                <v-list-tile to="/home">
+                    <v-list-tile-action>
+                        <v-icon>home</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                        <v-list-tile-title>Accueil</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+                <v-list-group v-for='group in routes' :value="group.active" :key="group.id" no-action>
+                    <v-list-tile slot="item">
+                        <v-list-tile-content>
+                            <v-list-tile-title>{{ group.name }}</v-list-tile-title>
+                        </v-list-tile-content>
+                        <v-list-tile-action>
+                            <v-icon>keyboard_arrow_down</v-icon>
+                        </v-list-tile-action>
+                    </v-list-tile>
+                    <v-list-tile v-for="route in group.items" :key="route.route" :to="route.route">
+                        <v-list-tile-action>
+                            <v-icon>{{ route.icon }}</v-icon>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>{{ route.name }}</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list-group>
+            </v-list>
+        </v-navigation-drawer>
+        <v-toolbar fixed app clipped-left>
+            <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+            <v-toolbar-title>Speratica</v-toolbar-title>
+        </v-toolbar>
+        <main>
+            <v-content>
+                <v-container fluid fill-height>
+                    <v-layout justify-center>
+                        <router-view></router-view>
+                    </v-layout>
+                </v-container>
+            </v-content>
+        </main>
+    </v-app>
 </template>
 
 <script>
 export default {
-    name: 'app',
+    data: () => ({
+        drawer: true,
+        routes: [
+            {
+                id: 'before',
+                name: 'Avant la compétition',
+                items: [
+                    {
+                        name: 'Générer les codes QR',
+                        route: '/generate-qrs',
+                        icon: 'people'
+                    }
+                ]
+            },{
+                id: 'after',
+                name: 'Après la compétition',
+                items: [
+                    {
+                        name: 'Scanner et analyser les feuilles',
+                        route: '/scan-results',
+                        icon: 'scanner'
+                    }
+                ]
+            }
+        ]
+    }),
+    mounted () {
+        // open the group containing the current route
+        this.routes = this.routes.map(route => Object.assign(route, {active: route.items.some(({route}) => route === this.$route.path)}));
+    }
 };
 </script>
-
-<style>
-@import url('https://fonts.googleapis.com/css?family=Lato:400,400i,600,700,700i,900,900i&subset=latin-ext');
-html, body, #app {
-    margin: 0;
-    padding: 0;
-    font-family: 'Lato', Roboto, Arial, Helvetica, sans-serif;
-    height: 100%;
-    color: #1c1c1c;
-}
-</style>
