@@ -1,5 +1,5 @@
 <template>
-    <v-app id="inspire">
+    <v-app id="app">
         <v-navigation-drawer persistent v-model="drawer" enable-resize-watcher clipped app>
             <v-list>
                 <v-list-tile to="/home">
@@ -37,7 +37,7 @@
         <main>
             <v-content>
                 <v-container fluid fill-height>
-                    <v-layout justify-center>
+                    <v-layout>
                         <router-view></router-view>
                     </v-layout>
                 </v-container>

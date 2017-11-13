@@ -1,7 +1,7 @@
 <template>
     <div id="gqrel">
-        <v-stepper v-model="e6" vertical>
-            <v-stepper-step step="1" :complete="e6 > 1">
+        <v-stepper v-model="currentstep" vertical>
+            <v-stepper-step step="1" :complete="currentstep > 1">
                 Choix du fichier contenant la liste des participants
             </v-stepper-step>
             <v-stepper-content step="1">
@@ -16,7 +16,7 @@
                     <input type="file" name="participants" id="participants" value="" @change="change" ref="fi" />
                 </div>
             </v-stepper-content>
-            <v-stepper-step step="2" :complete="e6 > 2">
+            <v-stepper-step step="2" :complete="currentstep > 2">
                 Vérification de la liste des participants
             </v-stepper-step>
             <v-stepper-content step="2">
@@ -36,10 +36,10 @@
                         </template>
                     </v-data-table>
                 </div>
-                <v-btn color="primary" @click.native="submit(e6++)">Valider</v-btn>
-                <v-btn @click.native="e6--" flat>Annuler</v-btn>
+                <v-btn color="primary" @click.native="submit(currentstep++)">Valider</v-btn>
+                <v-btn @click.native="currentstep--" flat>Annuler</v-btn>
             </v-stepper-content>
-            <v-stepper-step step="3" :complete="e6 > 3">
+            <v-stepper-step step="3" :complete="currentstep > 3">
                 Récupération des codes QR à imprimer
             </v-stepper-step>
             <v-stepper-content step="3">
@@ -47,7 +47,7 @@
                     <v-progress-circular indeterminate color="primary" v-if="loading"></v-progress-circular>
                     <img class="result elevation-4":src="'data:image/png;base64,' + img" v-for="img in result" :key="img">
                     <br>
-                    <v-btn @click.native="e6--">Retour</v-btn>
+                    <v-btn @click.native="currentstep--">Retour</v-btn>
                 </div>
             </v-stepper-content>
         </v-stepper>
@@ -77,7 +77,7 @@ export default {
             }],
             rowsPerPage: [10, 15, 20,30,50,{text:'Toutes',value:-1}],
             result: [],
-            e6: 1,
+            currentstep: 1,
             loading: false,
         };
     },
@@ -113,7 +113,7 @@ export default {
             const reader = new FileReader();
 
             if(file.name.endsWith('csv')) {
-                reader.onload = content => this.csv = content.target.result.split('\n').slice(1), this.e6 += 1;
+                reader.onload = content => this.csv = content.target.result.split('\n').slice(1), this.currentstep += 1;
                 reader.readAsText(file);
             } else if(file.name.endsWith('xlsx')){
                 reader.onload = content => {
@@ -121,7 +121,7 @@ export default {
                     console.log(worksheet, worksheet.SheetNames);
                     const sheet = worksheet.Sheets[worksheet.SheetNames[0]];
                     this.csv = xlsx.utils.sheet_to_csv(sheet).split('\n').slice(1).filter(e=>/[a-z]/gi.test(e));
-                    this.e6++;
+                    this.currentstep++;
                 };
                 reader.readAsArrayBuffer(file);
             } else {
