@@ -51,6 +51,7 @@
                                     <td class="text-xs-right">{{ props.item.blocs }}</td>
                                 </template>
                             </v-data-table>
+                            <v-btn v-show="results.length" color="primary" @click="genfiles()">Générer les fichiers</v-btn>
                         </v-card-text>
                     </v-card>
                 </v-flex>
@@ -121,7 +122,7 @@ export default {
             Array.prototype.forEach.call(input.files, file => {
                 new ImageCompressor(file, {
                     quality: .9,
-                    maxWidth: 620,
+                    maxWidth: 1600,
                     success: (res) => {
                         const reader = new FileReader();
                         reader.onload = (r) => {
@@ -169,6 +170,14 @@ export default {
             if(this.files.filter(f => f.status === 1).length < 3 && this.files.filter(f => f.status === 0).length) {
                 this.submit(this.files.find(f => f.status === 0));
             }
+        },
+        genfiles() {
+            const categories = this.results.reduce((obj, elem) => {
+                obj[elem.category] = obj[elem.category] || [];
+                obj[elem.category].push(elem);
+                return obj;
+            }, {});
+            console.log(categories);
         }
     }
 };
