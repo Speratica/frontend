@@ -55,6 +55,15 @@
                         </v-card-text>
                     </v-card>
                 </v-flex>
+                <v-flex d-flex xs12 v-if="Object.keys(csvs).length">
+                    <v-card>
+                        <v-card-title class="title">Fichiers</v-card-title>
+                        <v-card-text>
+                            <!-- TODO: Explain how to use the files -->
+                            <v-btn v-for="category in Object.keys(csvs)" color="primary" @click="getfile(category)" :key="category">{{category}}</v-btn>
+                        </v-card-text>
+                    </v-card>
+                </v-flex>
             </v-layout>
         </v-container>
     </div>
@@ -104,7 +113,8 @@ export default {
                 }
             ],
             results: [],
-            files: []
+            files: [],
+            csvs: {}
         };
     },
     computed: {
@@ -159,7 +169,7 @@ export default {
                         category: r.name.split(',')[0],
                         voies: Object.keys(r.results).filter(k => k.includes('v') && r.results[k] === 'yes').length,
                         blocs: Object.keys(r.results).filter(k => k.includes('b') && r.results[k] === 'yes').length,
-                        raw: r.results
+                        raw: r
                     });
                     file.status++;
                     this.updateQueue();
@@ -172,9 +182,12 @@ export default {
             }
         },
         genfiles() {
-            const categories = this.results.reduce((obj, elem) => {
-                obj[elem.category] = obj[elem.category] || [];
-                obj[elem.category].push(elem);
+            const categories = this.results.reduce((obj, {category, raw}) => {
+                const voies = [...new Array(42)].map((e, i) => raw.results[`v${i}`] || 'no').map(e => e == 'yes' ? 1 : 0).join(',');
+                const blocs = [...new Array(20)].map((e, i) => raw.results[`b${i}`] || 'no').map(e => e == 'yes' ? 1 : 0).join(',');
+                const csvline = `${raw.name.split(',').slice(1).reverse()},${voies},${blocs}`;
+                obj[category] = obj[category] || [];
+                obj[category].push(csvline);
                 return obj;
             }, {});
             console.log(categories);
